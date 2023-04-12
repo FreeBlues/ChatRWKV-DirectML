@@ -168,12 +168,12 @@ The `7B` Model is slow on my `RX6600 8G`, output one word need 1~2 seconds.
 ####  Load `14B` model  
 -    VRAM strategy:  
 ```
-args.strategy = 'privateuse1 fp32i8 *5 -> cpu fp32i8'
+args.strategy = 'privateuse1 fp32i8 *3 -> cpu fp32i8'
 ```
 
 -    Model selection:    
 ```
-args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-14b/RWKV-4-Pile-14B-20230313-ctx8192-test1050'
 ```
 
 The `14B` Model is hard to load, I have to use `fp32i8`, and it is very very slow on my `RX6600 8G`, output one word need several minutes(>3 mins).
@@ -363,7 +363,7 @@ args.strategy = 'privateuse1 fp32i8 *3 -> cpu fp32i8'
 
 -    模型选择:    
 ```
-args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-14b/RWKV-4-Pile-14B-20230313-ctx8192-test1050'
 ```
 
 `14B` 模型加载起来挺不容易，只能使用比较慢的 `fp32i8`, 而且它在我的 `RX6600 8G` 上非常非常慢, 输出一个字需要好几分钟(>3 分钟).
