@@ -48,7 +48,7 @@ pip install torch.directml
 [Models 1.5B](https://huggingface.co/BlinkDL/rwkv-4-pile-1b5/tree/main)    
 [Models 3B](https://huggingface.co/BlinkDL/rwkv-4-pile-3b/tree/main)    
 [Models 7B](https://huggingface.co/BlinkDL/rwkv-4-pile-7b/tree/main)    
-[Model 14B](https://huggingface.co/BlinkDL/rwkv-4-pile-14b/tree/main)    
+[Models 14B](https://huggingface.co/BlinkDL/rwkv-4-pile-14b/tree/main)    
 
 ### Put it into local folder
 
@@ -127,8 +127,31 @@ In fact, `ChatRWKV` has supported flexible `VRAM strategies`, you can use:
 
 More VRAM strategies you can try yourself.  
 
+### Samples
 
-## Successful Run log
+To support `3B` model on my PC:  
+```
+CPU: AMD Ryzen 5 5600 6-Core Processor 3.50 GHz
+Ram: 48G
+GPU: AMD Radeon RX6600 8G
+OS: Win10 x64
+```
+
+-    VRAM strategy:  
+```
+args.strategy = 'privateuse1 fp32 *20 -> cpu fp32'
+```
+
+-    Model selection:    
+```
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-testNovel-done-ctx2048-20230226'
+```
+
+With this VRAM strategy, the model partly in GPU Ram(about 7.8G), and partly in CPU Ram。
+
+>Notice: You need to try the number in `VRAM strategy` according to your hardware.
+
+## 1.5B Successful Run log
 
 ```
 (ChatRWKV-DML) E:\Github\ChatRWKV-DirectML\v2>python chat.py
@@ -237,6 +260,7 @@ E:\Github\ChatRWKV-DirectML\v2/../rwkv_pip_package/src\rwkv\utils.py:78: UserWar
 
 [ChatRWKV｜开源中文小说以及文章生成语言模型](https://openai.wiki/chatrwkv.html)
 
+---
 
 > ChatRWKV README
 
