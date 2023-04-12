@@ -149,7 +149,168 @@ args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-t
 
 With this VRAM strategy, the model partly in GPU Ram(about 7.8G), and partly in CPU Ram。
 
->Notice: You need to try the number in `VRAM strategy` according to your hardware.
+>Notice: You need to try the number before the asterisk `\*` in `VRAM strategy` according to your hardware.
+
+---
+
+#  中文说明：
+
+---
+
+# ChatRWKV-DirectML
+ChatRWKV-DirectML 针对使用 `AMD GPU[RX6600/6700/6800/6900]` 系列显卡的 `Windows` 用户， 可以让 `ChatRWKV` 运行在 `AMD`显卡上.
+
+## 安装
+
+### 克隆 ChatRWKV-DirectML
+
+```
+git clone https://github.com/FreeBlues/ChatRWKV-DirectML
+```
+
+### 安装 & 设置 Python 环境
+
+这里使用了 miniconda3，需要先安装它
+
+#### 安装 miniconda3
+
+下载 [Minicoda](https://docs.conda.io/en/latest/miniconda.html) 然后安装到你的 Windows 系统上.
+
+[Miniconda3 Windows 64-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe)    
+[Miniconda3 Windows 32-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe)    
+
+#### 新建 python 环境: ChatRWKV-DML
+
+```
+conda create -n ChatRWKV-DML python=3.10
+conda activate ChatRWKV-DML
+```
+
+#### 安装 pytorch 以及其他依赖
+
+```
+pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
+pip install numpy tokenizers prompt_toolkit
+```
+> 注意: `torch` 的版本应该是 `1.13.1`, 因为 `torch.directml` 目前为止只支持这个版本[20230412].
+
+#### 安装 torch.directml
+
+```
+pip install torch.directml
+```
+
+## 下载模型后放入 ChatRWKV-DirectML 项目文件夹
+
+### 模型
+
+[模型 1.5B](https://huggingface.co/BlinkDL/rwkv-4-pile-1b5/tree/main)    
+[模型 3B](https://huggingface.co/BlinkDL/rwkv-4-pile-3b/tree/main)    
+[模型 7B](https://huggingface.co/BlinkDL/rwkv-4-pile-7b/tree/main)    
+[模型 14B](https://huggingface.co/BlinkDL/rwkv-4-pile-14b/tree/main)    
+
+### 把下载回来的模型目录（整个目录）放入项目文件夹中
+
+下载模型后，把整个模型文件夹放入 `ChatRWKV-DirectML\v2\fsx\BlinkDL\HF-MODEL`
+
+如下所示:
+
+```
+E:\Github\ChatRWKV-DirectML\v2\fsx\BlinkDL\HF-MODEL\rwkv-4-pile-1b5
+└─.gitattributes
+└─README.md
+└─RWKV-4-Pile-1B5-20220814-4526.pth
+└─RWKV-4-Pile-1B5-20220822-5809.pth
+└─RWKV-4-Pile-1B5-20220903-8040.pth
+└─RWKV-4-Pile-1B5-20220929-ctx4096.pth
+└─RWKV-4-Pile-1B5-Chn-testNovel-done-ctx2048-20230312.pth
+└─RWKV-4-Pile-1B5-EngChn-test4-20230115.pth
+└─RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225.pth
+└─RWKV-4-Pile-1B5-Instruct-test1-20230124.pth
+└─RWKV-4-Pile-1B5-Instruct-test2-20230209.pth
+└─RWKV-4b-Pile-1B5-20230217-7954.pth
+```
+
+## 运行
+
+现在一切就绪，可以运行了:
+```
+# Enter the v2    
+cd E:\Github\ChatRWKV\v2\   
+python chat.py   
+```
+
+默认使用 `1.5B 模型`，因为它需要的存储资源最少。
+
+## 配置
+
+You can load different `model` and selet different `VRAM strategy`
+还可以加载不同的 `模型` 和选择不同的 `VRAM 策略`
+
+### 换模型
+
+在 `v2\chat.py: line 65` 中, 把你选中的那一行的注释符号 `#` 去掉, 同时保持其他所有行的注释状态不变, 如下所示:
+
+```
+args.strategy = 'privateuse1 fp32'
+# args.strategy = 'privateuse1 fp32 -> cpu fp32 *10'
+# args.strategy = 'privateuse1 fp32i8 *20 -> cpu fp32i8'
+# args.strategy = 'privateuse1 fp32 *20 -> cpu fp32'
+# args.strategy = 'cpu fp32 -> privateuse1 fp32 *10'
+# args.strategy = 'privateuse1:0 fp32*25 -> privateuse1:0 fp32'
+```
+
+### 换 VRAM 策略
+
+在 `v2\chat.py: line 77` 中, 把你选中的那一行的注释符号 `#` 去掉, 同时保持其他所有行的注释状态不变, 如下所示:
+
+```
+elif CHAT_LANG == 'Chinese': # testNovel系列是小说模型，请只用 +gen 指令续写。Raven系列可以对话和问答（目前中文只用了小语料，更适合创意虚构）
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-7B-v7-ChnEng-20230404-ctx2048'
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-3B-v7-ChnEng-20230404-ctx2048'
+    # args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-testNovel-done-ctx2048-20230226'
+    args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225'
+    # args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/7-run1z/rwkv-663'
+```
+
+> 注意:  在 `/fsx/BlinkDL/` 最前面，要加一个点 `.`   
+>> 正确写法: `./fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`    
+>> 错误写法: `/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`    
+
+### 更多 VRAM 策略    
+实际上, `ChatRWKV` 支持灵活的 `VRAM 策略`, 如下:
+
+-   Only GPU ram    
+-   Only CPU ram    
+-   GPU ram + CPU ram    
+
+你可以自己去试验更多的 VRAM 策略.  
+
+### 例子
+
+在我的 PC 上支持 `3B` 模型:  
+```
+CPU: AMD Ryzen 5 5600 6-Core Processor 3.50 GHz
+Ram: 48G
+GPU: AMD Radeon RX6600 8G
+OS: Win10 x64
+```
+
+-    VRAM 策略:  
+```
+args.strategy = 'privateuse1 fp32 *20 -> cpu fp32'
+```
+
+-    模型选择:    
+```
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-testNovel-done-ctx2048-20230226'
+```
+
+使用这个 VRAM 策略, 一部分模型被加载到 GPU Ram(大约 7.8G)中, 一部分模型被加载到 CPU Ram 中。
+
+> 注意: 你需要根据自己的硬件配置（主要是 GPU 的显存）来调整 `VRAM 策略` 中星号 `\*` 后面的数字.
+
 
 ## 1.5B Successful Run log
 
