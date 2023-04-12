@@ -45,10 +45,10 @@ pip install torch.directml
 
 ### Models
 
-[Models 1.5B](https://huggingface.co/BlinkDL/rwkv-4-pile-1b5/tree/main)
-[Models 3B](https://huggingface.co/BlinkDL/rwkv-4-pile-3b/tree/main)
-[Models 7B](https://huggingface.co/BlinkDL/rwkv-4-pile-7b/tree/main)
-[Model 14B](https://huggingface.co/BlinkDL/rwkv-4-pile-14b/tree/main)
+[Models 1.5B](https://huggingface.co/BlinkDL/rwkv-4-pile-1b5/tree/main)    
+[Models 3B](https://huggingface.co/BlinkDL/rwkv-4-pile-3b/tree/main)    
+[Models 7B](https://huggingface.co/BlinkDL/rwkv-4-pile-7b/tree/main)    
+[Model 14B](https://huggingface.co/BlinkDL/rwkv-4-pile-14b/tree/main)    
 
 ### Put it into local folder
 
@@ -76,9 +76,9 @@ E:\Github\ChatRWKV\v2\fsx\BlinkDL\HF-MODEL\rwkv-4-pile-1b5
 
 Now you can run it:
 ```
-# Enter the v2
-cd E:\Github\ChatRWKV\v2\
-python chat.py
+# Enter the v2    
+cd E:\Github\ChatRWKV\v2\   
+python chat.py   
 ```
 
 We use `1.5B Model` as default
@@ -114,18 +114,18 @@ elif CHAT_LANG == 'Chinese': # testNovel系列是小说模型，请只用 +gen �
     # args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/7-run1z/rwkv-663'
 ```
 
-> Notice: It should add a `.` in fornt of `/fsx/BlinkDL/`
->> Right: `./fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`
->> Wrong: `/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`
+> Notice: It should add a `.` in fornt of `/fsx/BlinkDL/`    
+>> Right: `./fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`    
+>> Wrong: `/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`    
 
-### More VRAM strategies
+### More VRAM strategies    
 In fact, `ChatRWKV` has supported flexible `VRAM strategies`, you can use:
 
--   Only GPU ram
--   Only CPU ram
--   GPU ram + CPU ram
+-   Only GPU ram    
+-   Only CPU ram    
+-   GPU ram + CPU ram    
 
-More VRAM strategies you can try yourself.
+More VRAM strategies you can try yourself.  
 
 
 ## Successful Run log
