@@ -129,7 +129,7 @@ More VRAM strategies you can try yourself.
 
 ### Samples
 
-To support `3B` model on my PC:  
+>  My PC:  
 ```
 CPU: AMD Ryzen 5 5600 6-Core Processor 3.50 GHz
 Ram: 48G
@@ -137,6 +137,7 @@ GPU: AMD Radeon RX6600 8G
 OS: Win10 x64
 ```
 
+####  Load `3B` model  
 -    VRAM strategy:  
 ```
 args.strategy = 'privateuse1 fp32 *20 -> cpu fp32'
@@ -149,7 +150,18 @@ args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-t
 
 With this VRAM strategy, the model partly in GPU Ram(about 7.8G), and partly in CPU Ram。
 
->Notice: You need to try the number before the asterisk `\*` in `VRAM strategy` according to your hardware.
+>Notice: You need to try the number before the asterisk `*` in `VRAM strategy` according to your hardware.
+
+####  Load `7B` model  
+-    VRAM strategy:  
+```
+args.strategy = 'privateuse1 fp32 *5 -> cpu fp32'
+```
+
+-    Model selection:    
+```
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+```
 
 ---
 
@@ -289,13 +301,15 @@ elif CHAT_LANG == 'Chinese': # testNovel系列是小说模型，请只用 +gen �
 
 ### 例子
 
-在我的 PC 上支持 `3B` 模型:  
+> 我的 PC:  
 ```
 CPU: AMD Ryzen 5 5600 6-Core Processor 3.50 GHz
 Ram: 48G
 GPU: AMD Radeon RX6600 8G
 OS: Win10 x64
 ```
+
+#### 加载 `3B` 模型
 
 -    VRAM 策略:  
 ```
@@ -309,8 +323,18 @@ args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-t
 
 使用这个 VRAM 策略, 一部分模型被加载到 GPU Ram(大约 7.8G)中, 一部分模型被加载到 CPU Ram 中。
 
-> 注意: 你需要根据自己的硬件配置（主要是 GPU 的显存）来调整 `VRAM 策略` 中星号 `\*` 后面的数字.
+> 注意: 你需要根据自己的硬件配置（主要是 GPU 的显存）来调整 `VRAM 策略` 中星号 `*` 后面的数字.
 
+####  加载 `7B` 模型  
+-    VRAM strategy:  
+```
+args.strategy = 'privateuse1 fp32 *5 -> cpu fp32'
+```
+
+-    Model selection:    
+```
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+```
 
 ## 1.5B Successful Run log
 
