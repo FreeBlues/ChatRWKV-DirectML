@@ -163,6 +163,21 @@ args.strategy = 'privateuse1 fp32 *5 -> cpu fp32'
 args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
 ```
 
+The `7B` Model is slow on my `RX6600 8G`, output one word need 1~2 seconds.
+
+####  Load `14B` model  
+-    VRAM strategy:  
+```
+args.strategy = 'privateuse1 fp32i8 *5 -> cpu fp32i8'
+```
+
+-    Model selection:    
+```
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+```
+
+The `14B` Model is hard to load, I have to use `fp32i8`, and it is very very slow on my `RX6600 8G`, output one word need several minutes(>3 mins).
+
 ---
 
 #  中文说明：
@@ -326,15 +341,32 @@ args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-t
 > 注意: 你需要根据自己的硬件配置（主要是 GPU 的显存）来调整 `VRAM 策略` 中星号 `*` 后面的数字.
 
 ####  加载 `7B` 模型  
--    VRAM strategy:  
+
+-    VRAM 策略:  
 ```
 args.strategy = 'privateuse1 fp32 *5 -> cpu fp32'
 ```
 
--    Model selection:    
+-    模型选择:    
 ```
 args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
 ```
+
+`7B` 模型在我的 `RX6600 8G` 上有点慢, 每1~2秒能输出一个字.
+
+####  加载 `14B` 模型     
+
+-    VRAM 策略:  
+```
+args.strategy = 'privateuse1 fp32i8 *3 -> cpu fp32i8'
+```
+
+-    模型选择:    
+```
+args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+```
+
+`14B` 模型加载起来挺不容易，只能使用比较慢的 `fp32i8`, 而且它在我的 `RX6600 8G` 上非常非常慢, 输出一个字需要好几分钟(>3 分钟).
 
 ## 1.5B Successful Run log
 
