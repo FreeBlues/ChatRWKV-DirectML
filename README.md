@@ -41,7 +41,7 @@ pip install numpy tokenizers prompt_toolkit
 pip install torch.directml
 ```
 
-## Download models and put it into ChatRWKV-DML folder
+## Download models and put it into ChatRWKV-DirectML folder
 
 ### Models
 
@@ -52,12 +52,12 @@ pip install torch.directml
 
 ### Put it into local folder
 
-After download the model, then put the whole folder into the `ChatRWKV-DML\v2\fsx\BlinkDL\HF-MODEL`
+After download the model, then put the whole folder into the `ChatRWKV-DirectML\v2\fsx\BlinkDL\HF-MODEL`
 
 Just like below:
 
 ```
-E:\Github\ChatRWKV\v2\fsx\BlinkDL\HF-MODEL\rwkv-4-pile-1b5
+E:\Github\ChatRWKV-DirectML\v2\fsx\BlinkDL\HF-MODEL\rwkv-4-pile-1b5
 └─.gitattributes
 └─README.md
 └─RWKV-4-Pile-1B5-20220814-4526.pth
