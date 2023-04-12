@@ -10,6 +10,9 @@ torch.backends.cudnn.allow_tf32 = True
 torch.backends.cuda.matmul.allow_tf32 = True
 current_path = os.path.dirname(os.path.abspath(__file__))
 
+import torch_directml
+dml = torch_directml.device()
+
 ########################################################################################################
 
 if os.environ.get('RWKV_JIT_ON') != '0':
@@ -79,7 +82,7 @@ class RWKV(MyModule):
         else:
             prxxx = lambda *args, **kwargs: None
 
-        STRATEGY_REGEX = r"^(?:(?:^|->) *(?:cuda(?::[\d]+)?|cpu|mps) (?:fp(?:16|32)|bf16)(?:i8|i4|i3)?(?: \*[\d]+\+?)? *)+$"
+        STRATEGY_REGEX = r"^(?:(?:^|->) *(?:cuda(?::[\d]+)?|cpu|mps|privateuse1) (?:fp(?:16|32)|bf16)(?:i8|i4|i3)?(?: \*[\d]+\+?)? *)+$"
         if not re.match(STRATEGY_REGEX, strategy):
             raise ValueError("Invalid strategy. Please read https://pypi.org/project/rwkv/")
 
@@ -269,11 +272,15 @@ class RWKV(MyModule):
                             w[x] = w[x].contiguous().pin_memory() # if you see "CUDA error: out of memory" here, that's out of CPU RAM, not VRAM. Get more RAM :)
                         except:
                             print('Note: You are running out of RAM. Get more CPU RAM. Now this will run much slower.')
-                    elif DEVICE != 'cpu':
+                    elif DEVICE != 'cpu':  
+                        if (DEVICE == 'privateuse1'): DEVICE = dml                     
+                        #DEVICE = dml
+                        #print("device: ", DEVICE)
                         w[x] = w[x].to(device=DEVICE).contiguous()
                     
                     if (dd.stream) or (DEVICE != 'cpu'):
                         try:
+                            if (DEVICE == 'privateuse1'): DEVICE = dml 
                             w[x+'_mx'] = w[x+'_mx'].to(device=DEVICE).contiguous()
                             w[x+'_rx'] = w[x+'_rx'].to(device=DEVICE).contiguous()
                             w[x+'_my'] = w[x+'_my'].to(device=DEVICE).contiguous()
@@ -548,6 +555,8 @@ class RWKV(MyModule):
                 for i in range(args.n_layer): # state: 0=att_xx 1=att_aa 2=att_bb 3=att_pp 4=ffn_xx
                     dd = self.strategy[i]
                     dev = dd.device
+                    if (dev == 'privateuse1'): dev = dml 
+                    #dev = dml
                     atype = dd.atype
                     state[i*5+0] = torch.zeros(args.n_embd, dtype=atype, requires_grad=False, device=dev).contiguous()
                     state[i*5+1] = torch.zeros(args.n_embd, dtype=torch.float, requires_grad=False, device=dev).contiguous()
@@ -565,6 +574,8 @@ class RWKV(MyModule):
                 ffn = f'blocks.{i}.ffn.'
                 dd = self.strategy[i]
                 dev = dd.device
+                #dev = dml
+                if (dev == 'privateuse1'): dev = dml
                 atype = dd.atype
                 wtype = dd.wtype
                 if seq_mode:
@@ -655,7 +666,10 @@ class RWKV(MyModule):
             
             dd = self.strategy[args.n_layer]
             x = x[-1,:] if (seq_mode and (not full_output)) else x
-            x = x.to(dtype=dd.atype, device=dd.device)
+            #x = x.to(dtype=dd.atype, device=dd.device)
+            if (dd.device == 'privateuse1'): dev = dml
+            x = x.to(dtype=dd.atype, device=dev)
+
             
             x = F.layer_norm(x, (args.n_embd,), weight=w['ln_out.weight'], bias=w['ln_out.bias'])
             if w['head.weight'].dtype != torch.uint8:

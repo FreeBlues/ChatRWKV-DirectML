@@ -1,3 +1,247 @@
+# ChatRWKV-DirectML
+ChatRWKV-DirectML is for `AMD GPU[RX6600/6700/6800/6900]` + `Windows` users.
+
+## Installation
+
+### Clone ChatRWKV-DirectML
+
+```
+git clone https://github.com/FreeBlues/ChatRWKV-DirectML
+```
+
+### Install & Setup Python Env
+
+Here we will use miniconda3, you need to install it first:
+
+#### Install miniconda3
+
+Download [Minicoda](https://docs.conda.io/en/latest/miniconda.html) and install it to your windows system.
+
+[Miniconda3 Windows 64-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe)
+[Miniconda3 Windows 32-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe)
+
+#### Create your python env: ChatRWKV-DML
+
+```
+conda create -n ChatRWKV-DML python=3.10
+conda activate ChatRWKV-DML
+```
+
+#### Install pytorch and other dependencies
+
+```
+pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
+pip install numpy tokenizers prompt_toolkit
+```
+> Notice: The version of `torch` should be `1.13.1`, the `torch.directml` only support this version by now[20230412].
+
+#### Install torch.directml
+
+```
+pip install torch.directml
+```
+
+## Download models and put it into ChatRWKV-DML folder
+
+### Models
+
+[Models 1.5B](https://huggingface.co/BlinkDL/rwkv-4-pile-1b5/tree/main)
+[Models 3B](https://huggingface.co/BlinkDL/rwkv-4-pile-3b/tree/main)
+[Models 7B](https://huggingface.co/BlinkDL/rwkv-4-pile-7b/tree/main)
+[Model 14B](https://huggingface.co/BlinkDL/rwkv-4-pile-14b/tree/main)
+
+### Put it into local folder
+
+After download the model, then put the whole folder into the `ChatRWKV-DML\v2\fsx\BlinkDL\HF-MODEL`
+
+Just like below:
+
+```
+E:\Github\ChatRWKV\v2\fsx\BlinkDL\HF-MODEL\rwkv-4-pile-1b5
+└─.gitattributes
+└─README.md
+└─RWKV-4-Pile-1B5-20220814-4526.pth
+└─RWKV-4-Pile-1B5-20220822-5809.pth
+└─RWKV-4-Pile-1B5-20220903-8040.pth
+└─RWKV-4-Pile-1B5-20220929-ctx4096.pth
+└─RWKV-4-Pile-1B5-Chn-testNovel-done-ctx2048-20230312.pth
+└─RWKV-4-Pile-1B5-EngChn-test4-20230115.pth
+└─RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225.pth
+└─RWKV-4-Pile-1B5-Instruct-test1-20230124.pth
+└─RWKV-4-Pile-1B5-Instruct-test2-20230209.pth
+└─RWKV-4b-Pile-1B5-20230217-7954.pth
+```
+
+## Run
+
+Now you can run it:
+```
+# Enter the v2
+cd E:\Github\ChatRWKV\v2\
+python chat.py
+```
+
+We use `1.5B Model` as default
+
+## Configuration
+
+You can load different `model` and selet different `VRAM strategy`
+
+### Change model
+
+In `v2\chat.py: line 65`, select the one you want to load and remove the comment, and comment all others lines, just like below:
+
+```
+args.strategy = 'privateuse1 fp32'
+# args.strategy = 'privateuse1 fp32 -> cpu fp32 *10'
+# args.strategy = 'privateuse1 fp32i8 *20 -> cpu fp32i8'
+# args.strategy = 'privateuse1 fp32 *20 -> cpu fp32'
+# args.strategy = 'cpu fp32 -> privateuse1 fp32 *10'
+# args.strategy = 'privateuse1:0 fp32*25 -> privateuse1:0 fp32'
+```
+
+### Change VRAM strategy
+
+In `v2\chat.py: line 77`, select the VRAM strategy you want to use and remove the comment, and comment all others lines, just like below:
+
+```
+elif CHAT_LANG == 'Chinese': # testNovel系列是小说模型，请只用 +gen 指令续写。Raven系列可以对话和问答（目前中文只用了小语料，更适合创意虚构）
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-7b/RWKV-4-Pile-7B-EngChn-testNovel-done-ctx2048-20230317'
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-7B-v7-ChnEng-20230404-ctx2048'
+    # args.MODEL_NAME = '/fsx/BlinkDL/HF-MODEL/rwkv-4-raven/RWKV-4-Raven-3B-v7-ChnEng-20230404-ctx2048'
+    # args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-3b/RWKV-4-Pile-3B-EngChn-testNovel-done-ctx2048-20230226'
+    args.MODEL_NAME = './fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225'
+    # args.MODEL_NAME = '/fsx/BlinkDL/CODE/_PUBLIC_/RWKV-LM/RWKV-v4neo/7-run1z/rwkv-663'
+```
+
+> Notice: It should add a `.` in fornt of `/fsx/BlinkDL/`
+>> Right: `./fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`
+>> Wrong: `/fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225`
+
+### More VRAM strategies
+In fact, `ChatRWKV` has supported flexible `VRAM strategies`, you can use:
+
+-   Only GPU ram
+-   Only CPU ram
+-   GPU ram + CPU ram
+
+More VRAM strategies you can try yourself.
+
+
+## Successful Run log
+
+```
+(ChatRWKV-DML) E:\Github\ChatRWKV-DirectML\v2>python chat.py
+
+
+ChatRWKV v2 https://github.com/BlinkDL/ChatRWKV
+
+Chinese - privateuse1 fp32 - E:\Github\ChatRWKV-DirectML\v2/prompt/default/Chinese-2.py
+Loading model - ./fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225
+RWKV_JIT_ON 1 RWKV_CUDA_ON 0 RESCALE_LAYER 0
+
+Loading ./fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225.pth ...
+Strategy: (total 24+1=25 layers)
+* privateuse1 [float32, float32], store 25 layers
+0-privateuse1-float32-float32 1-privateuse1-float32-float32 2-privateuse1-float32-float32 3-privateuse1-float32-float32 4-privateuse1-float32-float32 5-privateuse1-float32-float32 6-privateuse1-float32-float32 7-privateuse1-float32-float32 8-privateuse1-float32-float32 9-privateuse1-float32-float32 10-privateuse1-float32-float32 11-privateuse1-float32-float32 12-privateuse1-float32-float32 13-privateuse1-float32-float32 14-privateuse1-float32-float32 15-privateuse1-float32-float32 16-privateuse1-float32-float32 17-privateuse1-float32-float32 18-privateuse1-float32-float32 19-privateuse1-float32-float32 20-privateuse1-float32-float32 21-privateuse1-float32-float32 22-privateuse1-float32-float32 23-privateuse1-float32-float32 24-privateuse1-float32-float32
+emb.weight                        f32      cpu  50277  2048
+blocks.0.ln1.weight               f32 privateuseone:0   2048
+blocks.0.ln1.bias                 f32 privateuseone:0   2048
+blocks.0.ln2.weight               f32 privateuseone:0   2048
+blocks.0.ln2.bias                 f32 privateuseone:0   2048
+blocks.0.att.time_decay           f32 privateuseone:0   2048
+blocks.0.att.time_first           f32 privateuseone:0   2048
+blocks.0.att.time_mix_k           f32 privateuseone:0   2048
+blocks.0.att.time_mix_v           f32 privateuseone:0   2048
+blocks.0.att.time_mix_r           f32 privateuseone:0   2048
+blocks.0.att.key.weight           f32 privateuseone:0   2048  2048
+blocks.0.att.value.weight         f32 privateuseone:0   2048  2048
+blocks.0.att.receptance.weight    f32 privateuseone:0   2048  2048
+blocks.0.att.output.weight        f32 privateuseone:0   2048  2048
+blocks.0.ffn.time_mix_k           f32 privateuseone:0   2048
+blocks.0.ffn.time_mix_r           f32 privateuseone:0   2048
+blocks.0.ffn.key.weight           f32 privateuseone:0   2048  8192
+blocks.0.ffn.receptance.weight    f32 privateuseone:0   2048  2048
+blocks.0.ffn.value.weight         f32 privateuseone:0   8192  2048
+............................................................................................................................................................................................................................................................................................................................................................................................................
+blocks.23.ln1.weight              f32 privateuseone:0   2048
+blocks.23.ln1.bias                f32 privateuseone:0   2048
+blocks.23.ln2.weight              f32 privateuseone:0   2048
+blocks.23.ln2.bias                f32 privateuseone:0   2048
+blocks.23.att.time_decay          f32 privateuseone:0   2048
+blocks.23.att.time_first          f32 privateuseone:0   2048
+blocks.23.att.time_mix_k          f32 privateuseone:0   2048
+blocks.23.att.time_mix_v          f32 privateuseone:0   2048
+blocks.23.att.time_mix_r          f32 privateuseone:0   2048
+blocks.23.att.key.weight          f32 privateuseone:0   2048  2048
+blocks.23.att.value.weight        f32 privateuseone:0   2048  2048
+blocks.23.att.receptance.weight   f32 privateuseone:0   2048  2048
+blocks.23.att.output.weight       f32 privateuseone:0   2048  2048
+blocks.23.ffn.time_mix_k          f32 privateuseone:0   2048
+blocks.23.ffn.time_mix_r          f32 privateuseone:0   2048
+blocks.23.ffn.key.weight          f32 privateuseone:0   2048  8192
+blocks.23.ffn.receptance.weight   f32 privateuseone:0   2048  2048
+blocks.23.ffn.value.weight        f32 privateuseone:0   8192  2048
+ln_out.weight                     f32 privateuseone:0   2048
+ln_out.bias                       f32 privateuseone:0   2048
+head.weight                       f32 privateuseone:0   2048 50277
+
+Run prompt...
+指令:
+直接输入内容 --> 和机器人聊天（建议问机器人问题），用\n代表换行，必须用 Raven 模型
++ --> 让机器人换个回答
++reset --> 重置对话，请经常使用 +reset 重置机器人记忆
+
++i 某某指令 --> 问独立的问题（忽略聊天上下文），用\n代表换行，必须用 Raven 模型
++gen 某某内容 --> 续写内容（忽略聊天上下文），用\n代表换行，写小说用 testNovel 模型
++++ --> 继续 +gen / +i 的回答
+++ --> 换个 +gen / +i 的回答
+
+作者：彭博 请关注我的知乎: https://zhuanlan.zhihu.com/p/603840957
+如果喜欢，请看我们的优质护眼灯: https://withablink.taobao.com
+
+中文网文 testNovel 模型，可以试这些续写例子（不适合 Raven 模型！）：
++gen “区区
++gen 以下是不朽的科幻史诗长篇巨著，描写细腻，刻画了数百位个性鲜明的英雄和宏大的星际文明战争。\n第一章
++gen 这是一个修真世界，详细世界设定如下：\n1.
+
+Chinese - ./fsx/BlinkDL/HF-MODEL/rwkv-4-pile-1b5/RWKV-4-Pile-1B5-EngChn-testNovel-done-ctx2048-20230225 - privateuse1 fp32
+
+The following is a coherent verbose detailed conversation between a Chinese girl named Alice and her friend Bob. Alice is very intelligent, creative and friendly. Alice likes to tell Bob a lot about herself and her opinions. Alice usually gives Bob kind, helpful and informative advices.
+
+Bob: lhc
+Alice: LHC是指大型强子对撞机（Large Hadron Collider），是世界最大最强的粒子加速器，由欧洲核子中心（CERN）在瑞士日内瓦地 下建造。LHC的原理是加速质子（氢离子）并让它们相撞，让科学家研究基本粒子和它们之间的相互作用，并在2012年证实了希格斯玻色 子的存在。
+
+Bob: 企鹅会飞吗
+Alice: 企鹅是不会飞的。企鹅的翅膀短而扁平，更像是游泳时的一对桨。企鹅的身体结构和羽毛密度也更适合在水中游泳，而不是飞行 。
+
+Bob: hi
+Alice:E:\Github\ChatRWKV-DirectML\v2/../rwkv_pip_package/src\rwkv\utils.py:78: UserWarning: The operator 'aten::multinomial' is not currently supported on the DML backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at D:\a\_work\1\s\pytorch-directml-plugin\torch_directml\csrc\dml\dml_cpu_fallback.cpp:17.)
+  out = torch.multinomial(probs, num_samples=1)[0]
+ 你好，我是亚马逊的技术负责人。你好，我也是亚马逊的技术负责人。
+
+Bob:
+```
+
+##  Q&A
+
+### Q:I got a warning message, just like below, how about it?
+```
+E:\Github\ChatRWKV-DirectML\v2/../rwkv_pip_package/src\rwkv\utils.py:78: UserWarning: The operator 'aten::multinomial' is not currently supported on the DML backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at D:\a\_work\1\s\pytorch-directml-plugin\torch_directml\csrc\dml\dml_cpu_fallback.cpp:17.)
+  out = torch.multinomial(probs, num_samples=1)[0]
+```
+### A: It is ok, It will use CPU to deal with the operator 'aten::multinomial', you can ignore it.
+
+
+## Tutorial
+
+[ChatRWKV｜开源中文小说以及文章生成语言模型](https://openai.wiki/chatrwkv.html)
+
+
+> ChatRWKV README
+
+---
+
 # ChatRWKV (pronounced as "RwaKuv", from 4 major params: R W K V)
 ChatRWKV is like ChatGPT but powered by my RWKV (100% RNN) language model, which is the only RNN (as of now) that can match transformers in quality and scaling, while being faster and saves VRAM. Training sponsored by Stability EleutherAI :) **中文使用教程，请往下看，在本页面底部。**
 
