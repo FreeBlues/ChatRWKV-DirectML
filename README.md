@@ -17,8 +17,8 @@ Here we will use miniconda3, you need to install it first:
 
 Download [Minicoda](https://docs.conda.io/en/latest/miniconda.html) and install it to your windows system.
 
-[Miniconda3 Windows 64-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe)
-[Miniconda3 Windows 32-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe)
+[Miniconda3 Windows 64-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe)    
+[Miniconda3 Windows 32-bit](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe)    
 
 #### Create your python env: ChatRWKV-DML
 
